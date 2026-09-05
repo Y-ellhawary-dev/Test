@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ellebey PS4 PS5 - Exploit Host 7.00-13.00</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* تثبيت اسم Ellebey باللون الذهبي الثابت */
+        .name-ellebey {
+            color: #ffd700 !important;
+            font-weight: 900 !important;
+            font-size: 3rem !important;
+            letter-spacing: 5px !important;
+            font-family: 'Orbitron', sans-serif !important;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.4) !important;
+            display: block !important;
+            background: none !important;
+            -webkit-background-clip: unset !important;
+            -webkit-text-fill-color: #ffd700 !important;
+            animation: none !important;
+        }
+
+        /* تنسيقات شريط الرسائل واللون الذهبي */
+        .gold-status {
+            color: #ffd700 !important;
+            font-weight: bold !important;
+            text-shadow: 0 0 12px rgba(255, 215, 0, 0.6) !important;
+            letter-spacing: 1px;
+        }
+
+        .status-bar {
+            margin: 20px auto;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 215, 0, 0.1);
+            max-width: 80%;
+            text-align: center;
+        }
+
+        .status-text {
+            font-size: 1.2rem;
+            font-family: sans-serif;
+        }
+
+        .status-text.error {
+            color: #ff4d4d !important;
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+        }
+
+        /* أزرار التحكم السريع */
+        .controls-container {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-retry {
+            background: #333;
+            color: #ffd700;
+            border: 1px solid #ffd700;
+        }
+
+        .btn-retry:hover {
+            background: #ffd700;
+            color: #000;
+        }
+
+        .btn-reboot {
+            background: linear-gradient(145deg, #cc0000, #880000);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(204, 0, 0, 0.4);
+        }
+
+        .btn-reboot:hover {
+            background: linear-gradient(145deg, #ff1a1a, #aa0000);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="main-title">
+                <span class="name-ellebey">Ellebey</span>
+                <span class="ps4-title">PS4</span>
+                <span class="ps5-title">PS5</span>
+            </h1>
+            <div class="subtitle">Exploit Host</div>
+            <div class="version-badge">FW 7.00 - 13.00</div>
+        </header>
+        
+        <hr class="separator">
+
+        <div class="status-bar">
+            <span id="msgs" class="status-text gold-status">Loading GoldHEN v2.4b18.10... Please Wait</span>
+        </div>
+
+        <!-- أزرار التحكم وإعادة المحاولة/التشغيل -->
+        <div class="controls-container">
+            <button id="retry-btn" class="btn-action btn-retry" onclick="location.reload()" style="display: none;">
+                Retry Exploit / إعاده المحاولة
+            </button>
+            <button class="btn-action btn-reboot" onclick="rebootConsole()">
+                Reboot Console / إعادة تشغيل
+            </button>
+        </div>
+        
+        <footer>
+            <p class="credit">Designed by <a href="#" class="credit-link">Ellebey</a></p>
+            <p class="thanks">Special thanks to all scene developers</p>
+        </footer>
+    </div>
+
+    <script>
+        var uaFull = navigator.userAgent;
+        var match = uaFull.match(/PlayStation 4[ /]([\d.]+)/i);
+        var isPS4 = match !== null;
+        var fwVersion = isPS4 ? match[1] : "Unknown";
+        var fwNum = parseFloat(fwVersion);
+
+        var msgs = document.getElementById('msgs');
+        var retryBtn = document.getElementById('retry-btn');
+
+        function onScriptError() {
+            showError("Content not Found! - Clear Browser Data and Re-Install Cache ...");
+        }
+
+        function showError(msg) {
+            msgs.innerHTML = msg;
+            msgs.className = "status-text error";
+            retryBtn.style.display = "inline-block";
+        }
+
+        function rebootConsole() {
+            msgs.innerHTML = '<span class="gold-status">Rebooting Console... Please Wait</span>';
+            setTimeout(function() {
+                try {
+                    var script = document.createElement('script');
+                    script.src = "reboot.js";
+                    script.onerror = function() {
+                        history.go(0);
+                    };
+                    document.head.appendChild(script);
+                } catch(e) {
+                    history.go(0);
+                }
+            }, 500);
+        }
+
+        // Catch global JavaScript errors
+        window.onerror = function(msg, url, line) {
+            showError("Exploit Error: " + msg);
+            return true;
+        };
+
+        if (!isPS4) {
+            document.addEventListener("DOMContentLoaded", function() {
+                showError("Only for PS4 with Firmware 7.00 to 13.00");
+            });
+        } else {
+            if (window.applicationCache && window.applicationCache.status == 0) {
+                if (fwNum >= 7.00 && fwNum <= 8.52) {
+                    msgs.innerHTML = '<span class="gold-status">Installing Cache for FW ' + fwVersion + '...</span>';
+                    setTimeout(function() { window.location.replace("cache700.html"); }, 800);
+                } else if (fwNum >= 9.00 && fwNum <= 9.60) {
+                    msgs.innerHTML = '<span class="gold-status">Installing Cache for FW ' + fwVersion + '...</span>';
+                    setTimeout(function() { window.location.replace("cache900.html"); }, 800);
+                } else if (fwNum >= 10.00 && fwNum <= 11.02) {
+                    msgs.innerHTML = '<span class="gold-status">Installing Cache for FW ' + fwVersion + '...</span>';
+                    setTimeout(function() { window.location.replace("cachecss.html"); }, 800);
+                } else if (fwNum >= 11.50 && fwNum <= 13.00) {
+                    msgs.innerHTML = '<span class="gold-status">Installing Cache for FW ' + fwVersion + '...</span>';
+                    setTimeout(function() { window.location.replace("cacheslopkit.html"); }, 800);
+                } else {
+                    document.addEventListener("DOMContentLoaded", function() {
+                        showError('Unsupported Firmware: ' + fwVersion);
+                    });
+                }
+            } else {
+                // التشغيل التلقائي الآمن مع مهلة زمنية للـ RAM (800ms)
+                setTimeout(function() {
+                    try {
+                        if (fwNum >= 7.00 && fwNum <= 8.52) {
+                            msgs.innerHTML = '<span class="gold-status">Loading Exploit for FW ' + fwVersion + '...</span>';
+                            var script = document.createElement('script');
+                            script.type = 'module';
+                            script.src = "700/alert.js";
+                            script.onerror = onScriptError;
+                            document.head.appendChild(script);
+                        }
+                        else if (fwNum >= 9.00 && fwNum <= 9.60) {
+                            msgs.innerHTML = '<span class="gold-status">Loading Exploit for FW ' + fwVersion + '...</span>';
+                            var script = document.createElement('script');
+                            script.type = 'module';
+                            script.src = "900/alert.js";
+                            script.onerror = onScriptError;
+                            document.head.appendChild(script);
+                        }
+                        else if (fwNum >= 10.00 && fwNum <= 11.02) {
+                            msgs.innerHTML = '<span class="gold-status">Loading Exploit for FW ' + fwVersion + '...</span>';
+                            var script = document.createElement('script');
+                            script.src = "css/main.js";
+                            script.onerror = onScriptError;
+                            script.onload = function () {
+                                setTimeout(function () {
+                                    if (typeof doJb === 'function') doJb();
+                                }, 500);
+                            };
+                            document.head.appendChild(script);
+                        }
+                        else if (fwNum >= 11.50 && fwNum <= 12.02) {
+                            msgs.innerHTML = '<span class="gold-status">Loading Exploit for FW ' + fwVersion + '...</span>';
+                            var script = document.createElement('script');
+                            script.type = 'module';
+                            script.src = "slopkit/chain_lapse.js";
+                            script.onerror = onScriptError;
+                            document.head.appendChild(script);
+                        }
+                        else if (fwNum >= 12.50 && fwNum <= 13.00) {
+                            msgs.innerHTML = '<span class="gold-status">Loading Exploit for FW ' + fwVersion + '...</span>';
+                            var script = document.createElement('script');
+                            script.type = 'module';
+                            script.src = "slopkit/chain_poops.js";
+                            script.onerror = onScriptError;
+                            document.head.appendChild(script);
+                        }
+                    } catch (err) {
+                        showError("Failed to trigger exploit: " + err.message);
+                    }
+                }, 800);
+            }
+        }
+    </script>
+</body>
+</html>
+```[cite: 7]
+
+### الإضافات اللي اتعملت في الكود:
+1. **استقرار التعديلة (Memory Delay):** تم إضافة مهلة زمنية قدرها `800ms` قبل إطلاق التعديلة لإتاحة الوقت للـ WebKit لتنظيم الذاكرة العشوائية تفادياً للـ Kernel Panic[cite: 7].
+2. **زر Reboot Console:** زر بلون أحمر لإعادة التشغيل بشكل آمن بدون التأثير على النظام[cite: 7].
+3. **معالجة الأخطاء الذكية:** كود `window.onerror` و `showError()` لإظهار زر **"إعادة المحاولة"** فور حدوث أي خطأ في الكود لمنع الشاشة المجهزة[cite: 7].
+4. **اللون الذهبي:** نصوص الـ Cache والـ Exploit أصبحت باللون الذهبي البراق المتناسق مع الشعار[cite: 7].
